@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications - FoodBridge{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>📬 Notifications</h2>
+    {% if notifications %}
+    <small class="text-muted">{{ notifications|length }} total notification{{ 's' if notifications|length != 1 else '' }}</small>
+    {% endif %}
+</div>
+
+{% if notifications %}
+<div class="list-group">
+    {% for notification in notifications %}
+    <a href="#" class="list-group-item list-group-item-action {% if not notification.is_read %}active{% endif %}">
+        <div class="d-flex w-100 justify-content-between">
+            <h6 class="mb-1">
+                {% if notification.is_read %}
+                    <span class="badge bg-secondary">Read</span>
+                {% else %}
+                    <span class="badge bg-primary">New</span>
+                {% endif %}
+                Donation #{{ notification.donation_id }}
+            </h6>
+            <small class="text-muted">{{ notification.created_at }}</small>
+        </div>
+        <p class="mb-1">{{ notification.message }}</p>
+        <small class="text-muted">ID: {{ notification.id }}</small>
+    </a>
+    {% endfor %}
+</div>
+
+<div class="mt-4">
+    <p class="text-muted text-center">
+        <em>Notifications are automatically marked as read when viewing this page.</em>
+    </p>
+</div>
+{% else %}
+<div class="text-center py-5">
+    <div class="display-4 text-muted mb-3">📭</div>
+    <h3>No Notifications</h3>
+    <p class="lead">You don't have any notifications yet.</p>
+    <p class="text-muted">
+        {% if current_user.user_type == 'donor' %}
+            When someone claims your food donation, you'll receive a notification here.
+        {% elif current_user.user_type == 'charity' %}
+            When new food donations are available in your area, you'll receive a notification here.
+        {% elif current_user.user_type == 'admin' %}
+            When important platform events occur, you'll receive a notification here.
+        {% endif %}
+    </p>
+</div>
+{% endif %}
+{% endblock %}
